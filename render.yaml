@@ -3,7 +3,10 @@ services:
     name: veylora-global
     runtime: node
     buildCommand: npm install -g pnpm && pnpm install --frozen-lockfile && BASE_PATH=/ pnpm --filter @workspace/veylora-global run build && pnpm --filter @workspace/api-server run build
-    startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
+    # Push the Drizzle schema before starting, so the free Postgres DB
+    # Render provisions above gets its tables created automatically on
+    # first deploy (see Dockerfile for the same step on the Railway path).
+    startCommand: pnpm --filter @workspace/db run push; node --enable-source-maps artifacts/api-server/dist/index.mjs
     healthCheckPath: /api/healthz
     envVars:
       - key: NODE_ENV
