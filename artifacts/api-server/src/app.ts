@@ -2,10 +2,12 @@ import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import path from "path";
 import { fileURLToPath } from "url";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { pool } from "@workspace/db";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -63,8 +65,43 @@ app.use(
   }),
 );
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
+
+// Store sessions in Postgres instead of the default in-memory store, which
+// leaks memory and loses every admin login on every restart/redeploy.
+// Reuses the same connection pool @workspace/db already maintains, rather
+// than opening a second one.
+//
+// The "session" table itself is defined as a normal Drizzle schema table
+// (lib/db/src/schema/session.ts) and provisioned by the same `drizzle-kit
+// push` step already wired into every deploy platform (Dockerfile/
+// render.yaml) — NOT via connect-pg-simple's own `createTableIfMissing`
+// option. That option reads a `table.sql` file at a path resolved relative
+// to its own package location, which breaks once esbuild bundles the whole
+// server into a single dist file (ENOENT: no such file or directory, open
+// '.../dist/table.sql'), so the table would silently never get created in
+// the actual production build.
+//
+// Background failures here (the periodic session-prune query, etc.) are
+// reported through connect-pg-simple's own `errorLog` option rather than an
+// emitted event, so they're routed to the app's logger here instead of
+// `console.error`. The crash risk this guards against — an unhandled
+// "error" event on the underlying Postgres connection pool taking down the
+// whole Node process — is handled once, for every consumer of that shared
+// pool (queries and sessions alike), by the listener on `pool` itself in
+// @workspace/db (lib/db/src/index.ts).
+const PgSession = connectPgSimple(session);
+const sessionStore = new PgSession({
+  pool,
+  tableName: "session",
+  createTableIfMissing: false,
+  errorLog: (...args) => {
+    logger.error({ args }, "Session store error (non-fatal, app keeps running)");
+  },
+});
+
 app.use(
   session({
+    store: sessionStore,
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
