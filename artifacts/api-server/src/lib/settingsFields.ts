@@ -26,8 +26,8 @@ export const SETTINGS_FIELDS: SettingField[] = [
     label: "Short company description",
   },
   { key: "founding_year", group: "general", secret: false, default: "1998", label: "Founded in" },
-  { key: "contact_email", group: "general", secret: false, default: "support@veyloraglobal.com", label: "Primary contact email" },
-  { key: "contact_email_secondary", group: "general", secret: false, default: "sales@veyloraglobal.com", label: "Secondary contact email" },
+  { key: "contact_email", group: "general", secret: false, default: "support@veyloraglobal.online", label: "Primary contact email" },
+  { key: "contact_email_secondary", group: "general", secret: false, default: "sales@veyloraglobal.online", label: "Secondary contact email" },
   { key: "contact_phone", group: "general", secret: false, default: "+1 (800) 555-0199", label: "Primary phone (toll-free)" },
   { key: "contact_phone_secondary", group: "general", secret: false, default: "+1 (212) 555-0188", label: "Secondary phone (international)" },
   {
@@ -47,8 +47,8 @@ export const SETTINGS_FIELDS: SettingField[] = [
 
   // Integrations — provider credentials
   { key: "resend_api_key", group: "integrations", secret: true, default: "", label: "Resend API Key" },
-  { key: "from_email", group: "integrations", secret: false, default: "Veylora Global <support@veyloraglobal.com>", label: "From address (outbound email)" },
-  { key: "admin_email", group: "integrations", secret: false, default: "support@veyloraglobal.com", label: "Admin notification email" },
+  { key: "from_email", group: "integrations", secret: false, default: "Veylora Global <support@veyloraglobal.online>", label: "From address (outbound email)" },
+  { key: "admin_email", group: "integrations", secret: false, default: "support@veyloraglobal.online", label: "Admin notification email" },
   { key: "resend_webhook_secret", group: "integrations", secret: true, default: "", label: "Resend Inbound Webhook Secret" },
   { key: "termii_api_key", group: "integrations", secret: true, default: "", label: "Termii API Key" },
   { key: "termii_sender_id", group: "integrations", secret: false, default: "Veylora", label: "Termii Sender ID" },

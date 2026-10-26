@@ -34,8 +34,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   company_blurb:
     "Global logistics solutions tailored for your business. Reliable air freight, sea shipping, and road delivery across borders.",
   founding_year: "1998",
-  contact_email: "support@veyloraglobal.com",
-  contact_email_secondary: "sales@veyloraglobal.com",
+  contact_email: "support@veyloraglobal.online",
+  contact_email_secondary: "sales@veyloraglobal.online",
   contact_phone: "+1 (800) 555-0199",
   contact_phone_secondary: "+1 (212) 555-0188",
   office_address: "1200 Logistics Way, Suite 400\nNew York, NY 10001, USA",

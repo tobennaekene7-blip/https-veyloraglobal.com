@@ -16,7 +16,7 @@ export async function sendEmail(
   const settings = await getSettingsMap(["resend_api_key", "from_email"]);
   const apiKey = settings.resend_api_key ?? process.env.RESEND_API_KEY;
   const fromAddress =
-    settings.from_email ?? process.env.FROM_EMAIL ?? "Veylora Global <support@veyloraglobal.com>";
+    settings.from_email ?? process.env.FROM_EMAIL ?? "Veylora Global <support@veyloraglobal.online>";
 
   if (!apiKey) {
     throw new Error("Resend API key is not configured. Set it in Admin → Settings → Integrations.");
@@ -45,7 +45,7 @@ export async function sendEmail(
 
 export async function getFromAddress(): Promise<string> {
   const settings = await getSettingsMap(["from_email"]);
-  return settings.from_email ?? process.env.FROM_EMAIL ?? "Veylora Global <support@veyloraglobal.com>";
+  return settings.from_email ?? process.env.FROM_EMAIL ?? "Veylora Global <support@veyloraglobal.online>";
 }
 
 export async function getResendApiKey(): Promise<string | undefined> {

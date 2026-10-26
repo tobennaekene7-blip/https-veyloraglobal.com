@@ -240,7 +240,7 @@ export default function SendEmail() {
                 {status === "loading" ? "Sending…" : "Send Email"}
               </button>
               <span className="text-xs text-muted-foreground">
-                Sent via Resend · veyloraglobal.com
+                Sent via Resend · veyloraglobal.online
               </span>
             </div>
           </form>

@@ -3,7 +3,7 @@ import { sendEmail } from "../lib/resend";
 
 const router = Router();
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "support@veyloraglobal.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "support@veyloraglobal.online";
 
 // POST /api/contact
 router.post("/contact", async (req, res) => {
@@ -43,7 +43,7 @@ router.post("/contact", async (req, res) => {
             </div>
           </div>
           <div style="background:#f3f4f6;padding:16px 32px;border-radius:0 0 8px 8px;font-size:12px;color:#9ca3af;border:1px solid #e5e7eb;border-top:none">
-            Sent from the contact form at veyloraglobal.com
+            Sent from the contact form at veyloraglobal.online
           </div>
         </div>
       `
@@ -67,10 +67,10 @@ router.post("/contact", async (req, res) => {
               <p style="margin:0;font-size:14px;color:#374151;line-height:1.6"><em>${subject}</em></p>
             </div>
             <p style="line-height:1.6;color:#374151">In the meantime, you can track your shipments at:<br/>
-              <a href="https://veyloraglobal.com/track" style="color:#e67e22;font-weight:600">veyloraglobal.com/track</a>
+              <a href="https://veyloraglobal.online/track" style="color:#e67e22;font-weight:600">veyloraglobal.online/track</a>
             </p>
             <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
-            <p style="font-size:13px;color:#6b7280;margin:0">📞 +1 (800) 555-0199 &nbsp;|&nbsp; 📧 support@veyloraglobal.com</p>
+            <p style="font-size:13px;color:#6b7280;margin:0">📞 +1 (800) 555-0199 &nbsp;|&nbsp; 📧 support@veyloraglobal.online</p>
           </div>
           <div style="background:#f3f4f6;padding:16px 32px;border-radius:0 0 8px 8px;font-size:12px;color:#9ca3af;border:1px solid #e5e7eb;border-top:none;text-align:center">
             © 2024 Veylora Global. All rights reserved.

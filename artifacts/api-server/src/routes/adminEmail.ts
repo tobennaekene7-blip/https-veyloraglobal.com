@@ -64,7 +64,7 @@ router.post("/admin/send-email", async (req, res) => {
         </div>
         <div style="background:#ffffff;padding:32px;border:1px solid #e5e7eb;border-top:none;line-height:1.7;font-size:15px;color:#374151;white-space:pre-wrap">${message}</div>
         <div style="background:#f3f4f6;padding:16px 32px;border-radius:0 0 8px 8px;font-size:12px;color:#9ca3af;border:1px solid #e5e7eb;border-top:none;text-align:center">
-          📞 +1 (800) 555-0199 &nbsp;|&nbsp; 📧 support@veyloraglobal.com<br/>
+          📞 +1 (800) 555-0199 &nbsp;|&nbsp; 📧 support@veyloraglobal.online<br/>
           © 2024 Veylora Global. All rights reserved.
         </div>
       </div>
