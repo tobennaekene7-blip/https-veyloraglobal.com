@@ -14,6 +14,10 @@ interface InboxThread {
   messageCount: number
   hasInbound: boolean
   hasOutbound: boolean
+  sentSubject: string | null
+  sentPreview: string | null
+  sentAt: string | null
+  sentCount: number
 }
 
 interface EmailMessage {
@@ -50,9 +54,9 @@ export default function Inbox() {
   const [selectedThread, setSelectedThread] = React.useState<string | null>(null)
   const [replyText, setReplyText] = React.useState("")
   // "inbox" = threads that have at least one message a customer sent in.
-  // "sent" = threads you started (Send Email, or an inbox reply) that
-  // haven't gotten a reply yet — the moment one does, it has inbound
-  // messages too and moves over to the Inbox tab, like a real mail client.
+  // "sent" = every address you've emailed (Send Email or an inbox reply),
+  // newest send first. A thread can appear in both tabs once the other
+  // side replies — sent mail never disappears from the Sent tab.
   const [tab, setTab] = React.useState<"inbox" | "sent">("inbox")
 
   const { data, isLoading, isError } = useQuery({
@@ -98,7 +102,9 @@ export default function Inbox() {
 
   const allThreads = data?.threads ?? []
   const inboxThreads = allThreads.filter((t) => t.hasInbound)
-  const sentThreads = allThreads.filter((t) => !t.hasInbound && t.hasOutbound)
+  const sentThreads = allThreads
+    .filter((t) => t.hasOutbound && t.sentAt)
+    .sort((a, b) => new Date(b.sentAt!).getTime() - new Date(a.sentAt!).getTime())
   const threads = tab === "inbox" ? inboxThreads : sentThreads
 
   const switchTab = (next: "inbox" | "sent") => {
@@ -178,7 +184,13 @@ export default function Inbox() {
             </div>
           ) : (
             <ul className="divide-y">
-              {threads.map((t) => (
+              {threads.map((t) => {
+                const isSentTab = tab === "sent"
+                const subject = isSentTab ? t.sentSubject ?? t.latestSubject : t.latestSubject
+                const preview = isSentTab ? t.sentPreview ?? t.latestPreview : t.latestPreview
+                const at = isSentTab ? t.sentAt ?? t.latestAt : t.latestAt
+                const showUnread = !isSentTab && t.unreadCount > 0
+                return (
                 <li key={t.threadId}>
                   <button
                     onClick={() => setSelectedThread(t.threadId)}
@@ -187,23 +199,29 @@ export default function Inbox() {
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className={`text-sm truncate ${t.unreadCount > 0 ? "font-bold text-foreground" : "font-medium text-foreground/80"}`}>
-                        {t.counterpart}
+                      <span className={`text-sm truncate ${showUnread ? "font-bold text-foreground" : "font-medium text-foreground/80"}`}>
+                        {isSentTab ? `To: ${t.counterpart}` : t.counterpart}
                       </span>
-                      <span className="text-xs text-muted-foreground shrink-0">{timeAgo(t.latestAt)}</span>
+                      <span className="text-xs text-muted-foreground shrink-0">{timeAgo(at)}</span>
                     </div>
-                    <p className={`text-sm truncate mt-0.5 ${t.unreadCount > 0 ? "font-semibold text-foreground" : "text-muted-foreground"}`}>
-                      {t.latestSubject}
+                    <p className={`text-sm truncate mt-0.5 ${showUnread ? "font-semibold text-foreground" : "text-muted-foreground"}`}>
+                      {subject}
                     </p>
-                    <p className="text-xs text-muted-foreground truncate mt-0.5">{t.latestPreview}</p>
-                    {t.unreadCount > 0 && (
+                    <p className="text-xs text-muted-foreground truncate mt-0.5">{preview}</p>
+                    {isSentTab && t.sentCount > 1 && (
+                      <span className="inline-block mt-1 text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full">
+                        {t.sentCount} sent
+                      </span>
+                    )}
+                    {showUnread && (
                       <span className="inline-block mt-1 text-xs bg-accent text-accent-foreground px-1.5 py-0.5 rounded-full font-bold">
                         {t.unreadCount} new
                       </span>
                     )}
                   </button>
                 </li>
-              ))}
+                )
+              })}
             </ul>
           )}
         </div>

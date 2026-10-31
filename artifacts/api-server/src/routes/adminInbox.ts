@@ -33,12 +33,20 @@ router.get("/admin/inbox", async (req, res) => {
         messageCount: number;
         hasInbound: boolean;
         hasOutbound: boolean;
+        sentSubject: string | null;
+        sentPreview: string | null;
+        sentAt: string | null;
+        sentCount: number;
       }
     >();
+
+    const previewOf = (row: (typeof rows)[number]) =>
+      (row.textBody || row.htmlBody.replace(/<[^>]+>/g, " ")).slice(0, 140);
 
     for (const row of rows) {
       const existing = threads.get(row.threadId);
       const isUnread = row.direction === "inbound" && !row.isRead;
+      const isOut = row.direction === "outbound";
       if (!existing) {
         threads.set(row.threadId, {
           threadId: row.threadId,
@@ -49,13 +57,27 @@ router.get("/admin/inbox", async (req, res) => {
           unreadCount: isUnread ? 1 : 0,
           messageCount: 1,
           hasInbound: row.direction === "inbound",
-          hasOutbound: row.direction === "outbound",
+          hasOutbound: isOut,
+          // Rows are newest-first, so the first outbound row seen per
+          // thread is the most recent email sent to that address.
+          sentSubject: isOut ? row.subject : null,
+          sentPreview: isOut ? previewOf(row) : null,
+          sentAt: isOut ? row.createdAt.toISOString() : null,
+          sentCount: isOut ? 1 : 0,
         });
       } else {
         existing.messageCount += 1;
         if (isUnread) existing.unreadCount += 1;
         if (row.direction === "inbound") existing.hasInbound = true;
-        if (row.direction === "outbound") existing.hasOutbound = true;
+        if (isOut) {
+          existing.hasOutbound = true;
+          existing.sentCount += 1;
+          if (!existing.sentAt) {
+            existing.sentSubject = row.subject;
+            existing.sentPreview = previewOf(row);
+            existing.sentAt = row.createdAt.toISOString();
+          }
+        }
       }
     }
 
